@@ -1,0 +1,142 @@
+{
+  "document_kind": "proposed_campaign_contract",
+  "schema_version": "design-1",
+  "status": "planning_only",
+  "execution_enabled": false,
+  "campaign_id": "terminus_30layer_h100_nvl_exact_policy",
+  "baseline_config": "configs/1.5b_h100_kernel_optimized.json",
+  "baseline_evidence": "reports/evidence/h100_20260915/summary.json",
+  "baseline_bundle_digest": null,
+  "resolved_semantic_contract_digest": null,
+  "immutable_scope": {
+    "layers": 30,
+    "parameters": 1502210108,
+    "width": 2048,
+    "ffn_width": 5376,
+    "vocabulary": 96000,
+    "context": 4096,
+    "query_heads": 16,
+    "kv_heads": 4,
+    "head_dim": 128,
+    "local_attention_window": 1024,
+    "global_attention_every": 5,
+    "preserve_resolved_model_equations": true,
+    "preserve_fp8_grouping_and_rounding": true,
+    "preserve_full_vocabulary_and_all_gradients": true,
+    "preserve_optimizer_and_update_semantics": true,
+    "allow_architecture_or_new_precision_policy": false
+  },
+  "hardware": {
+    "gpu_count": 1,
+    "family": "H100 NVL",
+    "architecture": "SM90",
+    "power_limit_watts": 400,
+    "gpu_uuid": null,
+    "runtime_bundle_digest": null,
+    "exclusive_timing_lease": true,
+    "change_clocks_or_power": false
+  },
+  "workloads": {
+    "tokens_per_update": 32768,
+    "primary": {"microbatch": 8, "accumulation": 1},
+    "secondary": {"microbatch": 4, "accumulation": 2},
+    "count_padding_or_ignored_targets_as_useful_tokens": false,
+    "include_backward_clipping_optimizer_and_cache_refresh": true,
+    "rotate_inputs_and_test_real_working_set": true
+  },
+  "targets": {
+    "single_gpu_training_tokens_per_second": 67000,
+    "single_gpu_update_ms": 489.07462686567163,
+    "production_tokens_per_second": null,
+    "production_scope": "requires explicit global versus per-GPU definition and measured topology"
+  },
+  "memory_policy": {
+    "measured_usable_device_bytes": null,
+    "maximum_workspace_bytes": null,
+    "required_headroom_bytes": null,
+    "include_reserved_graph_and_process_memory": true,
+    "production_overhead_measured_separately": true,
+    "unknown_workspace_blocks_promotion": true
+  },
+  "search": {
+    "generator_workers_initial": 1,
+    "gpu_evaluators": 1,
+    "beam_families": 4,
+    "repair_attempts_per_proposal": 2,
+    "first_backend": "triton",
+    "later_backends": ["cuda_cutlass_sm90"],
+    "candidate_boundary": "compiled_device_artifact_and_constrained_launch_manifest",
+    "allow_generator_edits_to_judge_or_oracle": false,
+    "priorities": [
+      "producer_and_backward_fp8_fusion",
+      "projection_gemm_and_weight_gradient_schedules",
+      "unfiltered_full_vocabulary_loss",
+      "attention_backward_and_adjacent_layouts",
+      "residual_normalization_and_state_lifetimes",
+      "optimizer_cache_epilogues",
+      "host_launch_and_graph_scheduling"
+    ]
+  },
+  "numerical_policy": {
+    "oracle_bundle_digest": null,
+    "per_operator_gate_policy_digest": null,
+    "reuse_candidate_helpers_in_reference": false,
+    "allow_threshold_relaxation_during_search": false,
+    "required_checks": [
+      "forward_and_all_gradients",
+      "exact_quantizer_codes_and_scales_where_required",
+      "tiny_zero_outlier_and_nonfinite_cases",
+      "tails_strides_aliases_and_large_offsets",
+      "complete_model_optimizer_and_cache_state",
+      "sanitizer_coverage_for_custom_kernels",
+      "checkpoint_resume_and_supported_accumulation"
+    ]
+  },
+  "confirmation": {
+    "aa_calibration_required": true,
+    "frozen_shortlist_required": true,
+    "paired_blocks_floor": 8,
+    "independent_sessions_floor": 2,
+    "measured_updates_per_arm_per_block_floor": 128,
+    "sample_size_frozen_after_aa_calibration": true,
+    "minimum_full_update_speedup_fraction": 0.01,
+    "campaign_familywise_error_budget": 0.01,
+    "round_error_allocation": "0.01 / (j * (j + 1)), j >= 1",
+    "shortlist_adjustment": "simultaneous confidence bounds",
+    "interval_method_requires_calibration": true,
+    "absolute_target_requires_throughput_interval": true,
+    "ordinary_optional_stopping": false,
+    "insufficient_precision_status": "inconclusive"
+  },
+  "quality": {
+    "status": "pending_protocol_and_data",
+    "paired_seed_floor": 3,
+    "pilot_tokens_per_seed": null,
+    "data_manifest_digest": null,
+    "tokenizer_digest": null,
+    "initial_checkpoint_digest": null,
+    "higher_precision_reference_bundle_digest": null,
+    "noninferiority_policy_digest": null,
+    "languages": ["en", "hi", "ta", "te", "bn", "mr", "gu", "kn", "ml", "or", "pa"],
+    "compare_at_equal_useful_tokens": true,
+    "aggregate_cannot_hide_language_regression": true,
+    "missing_evidence_blocks_quality_certification": true
+  },
+  "budgets": {
+    "gpu_hours_calibration": null,
+    "gpu_hours_search": null,
+    "gpu_hours_confirmation": null,
+    "gpu_hours_quality": null,
+    "llm_spend_limit": null,
+    "artifact_storage_limit_bytes": null,
+    "external_resource_lease_expiry": null
+  },
+  "execution_prerequisites": [
+    "implement_and_validate_M0_M1_M2",
+    "freeze_resolved_configs_oracles_thresholds_and_runtime",
+    "declare_finite_resource_budgets_and_cleanup_lease",
+    "obtain_a_future_execution_instruction",
+    "register_quality_protocol_before_quality_claims",
+    "define_production_target_scope_before_production_claims"
+  ]
+}

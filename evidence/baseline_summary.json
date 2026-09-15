@@ -1,0 +1,80 @@
+{
+  "control": {
+    "tokens_per_second": 41506.09871019976,
+    "repeat_tokens_per_second": [
+      42239.69055142158,
+      40797.552988778145
+    ],
+    "peak_allocated_bytes": 90629864960,
+    "peak_reserved_bytes": 91362426880,
+    "warmup_updates_per_repeat": 5,
+    "measured_updates_per_repeat": 64,
+    "repeats": 2,
+    "receipts": [
+      "control_hot/benchmark_b8_r0.json.gz",
+      "control_hot/benchmark_b8_r1.json.gz"
+    ]
+  },
+  "selected": {
+    "tokens_per_second": 43922.29908225423,
+    "repeat_tokens_per_second": [
+      44217.05574321084,
+      43631.44617108832
+    ],
+    "peak_allocated_bytes": 80050257408,
+    "peak_reserved_bytes": 80901832704,
+    "warmup_updates_per_repeat": 5,
+    "measured_updates_per_repeat": 64,
+    "repeats": 2,
+    "receipts": [
+      "confirmed/benchmark_b8_r0.json.gz",
+      "confirmed/benchmark_b8_r1.json.gz"
+    ]
+  },
+  "throughput_gain_fraction": 0.05821314089104468,
+  "target_tokens_per_second": 67000,
+  "required_additional_throughput_factor": 1.525421059460655,
+  "required_additional_time_reduction_fraction": 0.3444432972797876,
+  "parameters": 1502210108,
+  "layers": 30,
+  "tokens_per_update": 32768,
+  "target_update_ms": 489.07462686567163,
+  "selected_update_ms": 746.0447354687574,
+  "order": [
+    "control_hot/0",
+    "confirmed/0",
+    "confirmed/1",
+    "control_hot/1"
+  ],
+  "final_source": {
+    "__init__.py": "065c7c7cc0b00a4777b7a42d86e522a667f106cc71c75d4e762f5a88a568602e",
+    "benchmark.py": "2f0583a62dabed3949fefd8756c041413df5459b8147af04106662235e248997",
+    "checkpoint.py": "e294ead4a3a83fd82684c0bb29ca555bc4c36c15a24a22dc9a102e64e0015130",
+    "cuda_graph.py": "bb495c074112ce546cd8d7ca505af7ffaf7a41d46f9d969ef97e38b18378978a",
+    "data.py": "05fa8375a2cffd53dfa4f61df8dffeefcfc97f7bf5db02e7d7d748f99c68ab6e",
+    "event_profile.py": "2de10cd2d815cbbba7d58182f503fe5def382defa39338fe5cce7293c44371cb",
+    "fp8_benchmark.py": "845137bb8adcbf6a6e57988e42ccd426ea7527610a48bf549c6710aca0be4842",
+    "fp8_kernels.py": "338155f0b5b3cc0bb6ba84215914a7eab6d75ce1a4b6aafa4cab2476ffb668d6",
+    "fp8_validation.py": "2f31a629d77524a00e594ba5dd753444e6bd791e41787ede33e7715baa67e991",
+    "generate.py": "4291a34a0c05c399e85d117b3930bc922a2ee18d24cdb38a1e1f5c5a6f2da526",
+    "integrity.py": "3ed531f466850b125cedc21d5a568817e0784a933d4f7da867556966585cf1f7",
+    "kernels.py": "1063eee24896a45ab912d81191dcee4cfd148133c8bd52206398a7983f9a492d",
+    "loss.py": "8365abdee5b287acc26e29905cd0e32064afcd8b75f1cee52ef638d74492ebe4",
+    "loss_kernels.py": "f580e6e171f39b08189294eeb2ddd1acac08f47a887a66fc4e5de6938a63f7c2",
+    "mlp_kernels.py": "eb9f0bef5c85ee56888eeca1c1d218db46bb6dcc25f0ac3d635f32c8623241ff",
+    "model.py": "4e7b977a59dbcec14962afb1aef142bd6b9cea1e00247ef00f858135097ad4ca",
+    "optim.py": "5d058ff61cfe604d3212207a4ea8baccd01c690b14ba60634ef008ab789da811",
+    "pointwise.py": "ba70aed27fc747b3005d33c39f88dcc6ce605731e5c701cbf6828fd51767dc8f",
+    "pointwise_kernels.py": "fb2098960b28022b51b9f7a7405c5686a704fde20b6032179588d845b83aa7fd",
+    "preflight.py": "017466cbd392f758393131b7cefbce5833eb461a4f7c63cf528a3ab7cba26d64",
+    "prepare_data.py": "ebc477c02de1e2d5671d3ee9b00156434228a97dabad3689bb27801d9acb4db5",
+    "qkv_kernels.py": "b07685be8eb3b0ce816f7f8f74ce5f75b70490e15a999a9513fed0be38901f31",
+    "quantization.py": "f24e1dad9b843bb0ee97cc354213f3e08a134e29e661278b4d5a4e793fd64212",
+    "roofline.py": "79b4afbbeadde460604c43fcfe12e0a28772cd608a2e1aa3bcef4c705cca3211",
+    "tokenizer.py": "1d66fa9e57764204a2feafee897b44dfe07ce22388e950053f3703ee3faa2d20",
+    "train.py": "d2b6a12c0d12bc4263d0fcdfa0f46d5d1769e9e74054aff6e96a9e757bfdb127",
+    "wgrad_kernels.py": "d8cea16e8c8a636c2853b225039edfb5959246df366457930cf47f478c6ee57c"
+  },
+  "clock_trial": "Live memory-clock locking was unsupported. Observed memory clock remained 2619 MHz; this is not a valid 1593 MHz ablation.",
+  "scope": "Matched single-GPU synthetic optimizer updates, not production throughput or language-model quality evidence."
+}
