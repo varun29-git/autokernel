@@ -10,11 +10,11 @@ from .analysis import ConfirmationPolicy, TimingBlock, calibrate, confirm, quali
 from .contracts import Budget, CampaignSpec, CandidateSpec, Case, TaskSpec, schemas
 from .controller import campaign_report, run_campaign
 from .evaluator import judge_digest
-from .integrity import file_digest, read_json, write_json
+from .integrity import digest, file_digest, read_json, write_json
 from .physics import target_gap
 from .process import Lease
 from .release import export_research_bundle
-from .search import command_proposal, seed_candidates
+from .search import command_proposal, rank_candidates, seed_candidates
 from .store import Store
 from .terminus import historical_receipt, hopper_campaign, import_terminus
 
@@ -40,7 +40,10 @@ def generate_one(store, campaign, argv):
         with store.transaction():
             store.event({"type": "generator_reserved", "campaign": campaign.identity})
         with store.activity(campaign.identity, campaign.budget, seconds=120., kind="generation"):
-            candidate, source = command_proposal(argv, campaign.task, campaign_report(store))
+            observations = campaign_report(store)
+            candidate, source = command_proposal(argv, campaign.task, observations)
+        store.event({"type": "agent_proposal", "candidate": candidate.identity,
+                     "source": candidate.source_digest, "observation_digest": digest(observations)})
         if store.put(source) != candidate.source_digest:
             raise ValueError("generator source changed")
         return candidate
@@ -69,6 +72,8 @@ def parser():
     hopper.add_argument("--gpu-uuid")
     hopper.add_argument("--build-image")
     hopper.add_argument("--enable-execution", action="store_true")
+    hopper.add_argument("--generator-calls", type=int, default=12)
+    hopper.add_argument("--seed-candidates", type=int, default=4)
     run = sub.add_parser("run", help="Run/resume a frozen bounded campaign on this machine")
     run.add_argument("--campaign", required=True)
     run.add_argument("--store", required=True)
@@ -157,7 +162,8 @@ def dispatch(args):
         return import_terminus(args.repo, args.config, args.output)
     if args.command == "hopper-plan":
         campaign = hopper_campaign(read_json(args.imported), gpu_uuid=args.gpu_uuid,
-                                   build_image=args.build_image, enable=args.enable_execution)
+                                   build_image=args.build_image, enable=args.enable_execution,
+                                   generator_calls=args.generator_calls, seed_candidates=args.seed_candidates)
         write_json(args.output, campaign.model_dump(mode="json"))
         return {"campaign": args.output, "gpu_execution": campaign.gpu_execution}
     if args.command == "inspect-historical":
@@ -185,7 +191,8 @@ def dispatch(args):
             return run_campaign(store, campaign, list(seed_candidates(store, campaign)))
         if args.command == "research":
             campaign = CampaignSpec.model_validate(read_json(args.campaign))
-            run_campaign(store, campaign, list(seed_candidates(store, campaign)))
+            seeds = rank_candidates(list(seed_candidates(store, campaign)), beam_families=campaign.beam_families)
+            run_campaign(store, campaign, seeds[:campaign.initial_seed_candidates])
             for _ in range(campaign.budget.max_generator_calls):
                 try:
                     candidate = generate_one(store, campaign, args.generator)

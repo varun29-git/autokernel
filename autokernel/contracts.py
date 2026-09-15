@@ -88,10 +88,13 @@ class CampaignSpec(Contract):
     tokens_per_update: int = Field(default=32768, ge=1)
     immutable_model: dict = Field(default_factory=dict)
     beam_families: int = Field(default=4, ge=1, le=32)
+    initial_seed_candidates: int = Field(default=1, ge=0, le=100000)
     timing_repetitions: int = Field(default=20, ge=3, le=1000)
 
     @model_validator(mode="after")
     def execution_contract(self):
+        if self.initial_seed_candidates + self.budget.max_generator_calls > self.budget.max_candidates:
+            raise ValueError("seed and generator budgets exceed the candidate budget")
         if self.mode == "demo":
             if self.gpu_execution or self.task.operation != "vector_add_f32":
                 raise ValueError("demo cannot execute or certify GPU kernels")

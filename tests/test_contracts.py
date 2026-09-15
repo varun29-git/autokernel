@@ -26,6 +26,15 @@ def test_hopper_cannot_be_enabled_without_identity(campaign):
         CampaignSpec.model_validate(payload)
 
 
+def test_seed_and_agent_budgets_share_one_candidate_budget(campaign):
+    payload = campaign.model_dump(mode="json")
+    payload["initial_seed_candidates"] = 8
+    payload["budget"]["max_generator_calls"] = 9
+    payload["budget"]["max_candidates"] = 16
+    with pytest.raises(ValidationError, match="budgets"):
+        CampaignSpec.model_validate(payload)
+
+
 def test_launch_manifest_rejects_arbitrary_host_parameters():
     with pytest.raises(ValidationError):
         CandidateSpec(task_digest="a" * 64, backend="cuda", family="row", source_digest="b" * 64,

@@ -46,7 +46,8 @@ def import_terminus(repository, config_path, output):
     return result
 
 
-def hopper_campaign(imported, *, name="terminus-h100", gpu_uuid=None, build_image=None, enable=False):
+def hopper_campaign(imported, *, name="terminus-h100", gpu_uuid=None, build_image=None, enable=False,
+                    generator_calls=12, seed_candidates=4):
     cases = [Case(rows=rows, columns=256, epsilon=0.0 if stress in {"zero", "tiny"} else 1e-5,
                   stress=stress, column_stride=2 if rows == 7 else 1, row_padding=8 if rows == 7 else 0)
              for rows, stress in [(1, "normal"), (7, "rounding"), (127, "zero"), (128, "tiny"),
@@ -59,9 +60,10 @@ def hopper_campaign(imported, *, name="terminus-h100", gpu_uuid=None, build_imag
     return CampaignSpec(name=name, mode="hopper", gpu_execution=enable, task=task,
                         source_snapshot_digest=judge_digest(), gpu_uuid=gpu_uuid, build_image=build_image,
                         immutable_model=imported["resolved_config"]["model"],
-                        budget=Budget(max_candidates=16, max_wall_seconds=14400.0,
+                        budget=Budget(max_candidates=16, max_generator_calls=generator_calls, max_wall_seconds=14400.0,
                                       worker_timeout_seconds=120.0, max_storage_bytes=20_000_000_000,
-                                      reserve_confirmation_seconds=3600.0))
+                                      reserve_confirmation_seconds=3600.0),
+                        initial_seed_candidates=seed_candidates)
 
 
 def historical_receipt(path):

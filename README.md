@@ -37,9 +37,27 @@ The demo executes actual NumPy kernels with several chunk schedules. Deliberatel
 
 The system optimizes a complete subgraph or training update before making a training-performance claim. It does not add isolated kernel speedups together. A custom kernel is not preferred over a faster incumbent library.
 
-## Generate and evaluate candidates
+## AI research agent: generate, evaluate, learn
 
-The provider interface is an explicitly configured executable. It reads a JSON request on stdin and emits exactly one JSON object containing `candidate` and `source`. The request includes the frozen task, observation archive and candidate schema. Provider credentials stay with that process; build and evaluation workers receive a scrubbed environment. No provider is contacted by installation or import.
+AutoKernel is the supervisor around a coding model, not a replacement for one. The coding model proposes source; the supervisor builds it in isolation, measures it with hidden inputs, rejects incorrect output, and returns only signed campaign evidence to the next proposal. The model cannot change the task, oracle, workload, pass/fail status or training checkout.
+
+The included `autokernel-llm-provider` is an OpenAI-compatible Chat Completions adapter. It reads the command-provider request on stdin and emits exactly one JSON object containing `candidate` and `source`. It derives task/source digests itself instead of trusting the model to supply them. Set credentials only in the provider process environment; build and evaluation workers receive a scrubbed environment. No provider is contacted by installation or import.
+
+```bash
+export AUTOKERNEL_MODEL_API_KEY='...'
+export AUTOKERNEL_MODEL_NAME='your-coding-model'
+# Optional for a compatible non-default endpoint:
+export AUTOKERNEL_MODEL_ENDPOINT='https://provider.example/v1/chat/completions'
+
+uv run autokernel research --campaign artifacts/hopper.json \
+  --store artifacts/h100-search -- autokernel-llm-provider
+```
+
+Each call receives the frozen task, candidate schema, and summarized signed results from earlier attempts. Its required response is one JSON object with `backend`, `family`, permitted `parameters`, a falsifiable `hypothesis`, complete `source`, and `parent_ids`. Invalid responses consume the bounded generation activity but cannot become candidates. Every accepted proposal records the observation digest that informed it in the signed event chain.
+
+The H100 plan starts with four diverse seed kernels and reserves twelve of the sixteen candidate slots for the coding model. Change this before freezing a campaign with `hopper-plan --seed-candidates N --generator-calls M`; `N + M` cannot exceed the candidate budget.
+
+For a local protocol smoke test, the included generator is deterministic, not an LLM:
 
 ```bash
 uv run autokernel demo-plan --output artifacts/research-campaign.json --generator-calls 2
@@ -47,7 +65,7 @@ uv run autokernel research --campaign artifacts/research-campaign.json \
   --store artifacts/research -- python "$(pwd)/examples/demo_generator.py"
 ```
 
-The included generator is a deterministic interface example, not an LLM. Replace the command with your coding-agent/provider adapter. `research` alternates bounded proposals and independent evaluation. `propose` submits one generated proposal; `submit --candidate candidate.json --source kernel.cu` accepts a manually produced one. Candidate files cannot alter the judge, references, workload or thresholds.
+`research` alternates bounded proposals and independent evaluation. `propose` submits one generated proposal; `submit --candidate candidate.json --source kernel.cu` accepts a manually produced one. Candidate files cannot alter the judge, references, workload or thresholds.
 
 An isolated-kernel timing is exploratory. The report's `best_exploratory_candidate` is not a production dispatch decision. Confirmation, quality and supported-shape requirements remain separate.
 
@@ -73,6 +91,7 @@ For a future native run, use the selected H100 host with its pinned Torch/FA3/De
 autokernel hopper-plan --imported artifacts/terminus-import.json \
   --gpu-uuid GPU-REPLACE-WITH-ACTUAL-UUID \
   --build-image registry/image@sha256:REPLACE-WITH-64-HEX-DIGEST \
+  --seed-candidates 4 --generator-calls 12 \
   --enable-execution --output artifacts/hopper-enabled.json
 ```
 
