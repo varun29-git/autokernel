@@ -1,6 +1,14 @@
-# Terminus AutoKernel
+# AutoKernel
 
-A separate research framework for optimizing training kernels while preserving the model's numerical and update contracts. It runs bounded searches, judges candidates independently, and keeps reproducible evidence. Production training imports no search controller or model-provider client.
+AutoKernel is a general research framework for optimizing training kernels while preserving numerical and update contracts. It runs bounded searches, judges candidates independently, and keeps reproducible evidence. Production training imports no search controller or model-provider client.
+
+## Development timeline
+
+| Date | Milestone |
+| --- | --- |
+| 15 September 2026 | Initial bounded-search, independent-oracle, and evidence framework developed. |
+| 26 November 2026 | CPU control plane, adversarial demo, packaging, and release documentation verified. |
+| **27 November 2026** | **First public open-source release under Apache-2.0.** |
 
 ## Evidence and release scope
 
