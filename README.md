@@ -2,7 +2,19 @@
 
 A separate research framework for optimizing training kernels while preserving the model's numerical and update contracts. It runs bounded searches, judges candidates independently, and keeps reproducible evidence. Production training imports no search controller or model-provider client.
 
-**Status:** the CPU control plane and adversarial search demo are tested. CUDA/Triton compilation, native H100 execution, sanitizer/profiler integration and complete-training adapters are implemented but **not yet validated on an H100**. This repository does not claim a throughput improvement, 67k tokens/s, or multilingual quality parity. The first native search task is **BF16 → rowwise FP8 quantization**, including exact codes/scales and strided inputs. Other kernel families require additional trusted task/ABI/oracle adapters; they are not silently treated as supported.
+## Evidence and release scope
+
+| Evidence track | Current status |
+| --- | --- |
+| **Tested CPU control plane** | Contracts, search, persistence, analysis, adversarial evaluation and the NumPy demo are covered by the CPU test suite. Demo timings are labeled `cpu_demo` and are not GPU measurements. |
+| **Unvalidated native H100 execution** | CUDA/Triton compilation, native execution, sanitizer/profiler integration and complete-training adapters are implemented but **have not been validated on an H100**. No native throughput, sanitizer, integration or production qualification is claimed. |
+| **Historical external baseline** | The separate training repository's September 15, 2026 measurements predate this framework and are retained only as historical evidence. They are not AutoKernel results and do not establish production throughput or multilingual quality. See [the baseline record](docs/baseline.md). |
+
+This repository does not claim a throughput improvement, 67k tokens/s, or multilingual quality parity. The first native search task is **BF16 → rowwise FP8 quantization**, including exact codes/scales and strided inputs. Other kernel families require additional trusted task/ABI/oracle adapters; they are not silently treated as supported.
+
+## License
+
+The original code in this repository is available under [Apache-2.0](LICENSE). External dependencies, tools and referenced research projects retain their own licenses; no third-party project is relicensed by this release.
 
 ## Quick start
 

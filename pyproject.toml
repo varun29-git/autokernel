@@ -1,11 +1,12 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "terminus-autokernel"
 version = "0.1.0"
 description = "Evidence-driven kernel search for complete model training"
+license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.26,<3", "pydantic>=2.8,<3", "scipy>=1.11,<2"]
 
